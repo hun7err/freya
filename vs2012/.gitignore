@@ -1,0 +1,6 @@
+Debug
+Release
+*.opensdf
+*.sdf
+x64
+*.vcxproj.user
