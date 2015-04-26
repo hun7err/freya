@@ -1,7 +1,8 @@
 #version 330 core
 layout(location = 0) in vec3 vertexPosition_modelspace;
-
-void main() {
-	gl_Position.xyz = vertexPosition_modelspace;
-    gl_Position.w = 1.0;
+uniform mat4 MVP;
+ 
+void main(){
+    vec4 v = vec4(vertexPosition_modelspace,1);
+    gl_Position = MVP * v;
 }
