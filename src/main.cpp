@@ -175,8 +175,8 @@ int main(int argc, char *argv[]) {
 	// Initial Field of View
 	float FoV = 45.0f;
  
-	float speed = 0.1f,
-		mouseSpeed = 0.001f,
+	float speed = 0.005f,
+		mouseSpeed = 0.0005f,
 		deltaTime;
 	
 	double xpos, ypos, currentTime, lastTime = glfwGetTime();
@@ -187,25 +187,38 @@ int main(int argc, char *argv[]) {
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
+	direction.x = cos(verticalAngle) * sin(horizontalAngle);
+	direction.y = sin(verticalAngle);
+	direction.z = cos(verticalAngle) * cos(horizontalAngle);
+
+	right.x = sin(horizontalAngle - HALF_PI);
+	right.y = 0;
+	right.z = cos(horizontalAngle - HALF_PI);
+
+	up = glm::cross( right, direction );
+
 	do{
 		currentTime = glfwGetTime();
 		deltaTime = float(currentTime - lastTime);
 		
 		glfwGetCursorPos(window, &xpos, &ypos);
 		glfwSetCursorPos(window, WINDOW_WIDTH/2, WINDOW_HEIGHT/2);
+		
+		if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
+		{
+			horizontalAngle += mouseSpeed * deltaTime * float( WINDOW_WIDTH/2 - xpos );
+			verticalAngle   += mouseSpeed * deltaTime * float( WINDOW_HEIGHT/2 - ypos );
 
-		horizontalAngle += mouseSpeed * deltaTime * float( WINDOW_WIDTH/2 - xpos );
-		verticalAngle   += mouseSpeed * deltaTime * float( WINDOW_HEIGHT/2 - ypos );
+			direction.x = cos(verticalAngle) * sin(horizontalAngle);
+			direction.y = sin(verticalAngle);
+			direction.z = cos(verticalAngle) * cos(horizontalAngle);
 
-		direction.x = cos(verticalAngle) * sin(horizontalAngle);
-		direction.y = sin(verticalAngle);
-		direction.z = cos(verticalAngle) * cos(horizontalAngle);
+			right.x = sin(horizontalAngle - HALF_PI);
+			right.y = 0;
+			right.z = cos(horizontalAngle - HALF_PI);
 
-		right.x = sin(horizontalAngle - HALF_PI);
-		right.y = 0;
-		right.z = cos(horizontalAngle - HALF_PI);
-
-		up = glm::cross( right, direction );
+			up = glm::cross( right, direction );
+		}
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(programID);

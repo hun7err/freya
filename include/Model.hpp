@@ -14,6 +14,16 @@ using namespace glm;
 #include <string>
 #include <vector>
 
+#define TEXTURE_DIFFUSE		1
+#define TEXTURE_SPECULAR	2
+#define TEXTURE_NORMAL		3
+
+struct TextureInfo
+{
+	unsigned int id;
+	unsigned char type;
+};
+
 struct MaterialInfo
 {
 	bool isDefault;
@@ -22,6 +32,10 @@ struct MaterialInfo
     glm::vec3 specular;
 	glm::vec3 emissive;
     float shininess;
+
+	TextureInfo* diffuseTexture,
+				 specularTexture,
+				 normalTexture;
 };
 
 struct Mesh
@@ -43,14 +57,17 @@ class Model
 {
 	private:
 		MaterialInfo* loadMaterial(aiMaterial* material);
+		TextureInfo* loadTexture(aiTexture* texture);
 		Mesh* loadMesh(aiMesh* mesh);
 		void loadNode(const aiScene* scene, aiNode* node, Node *parent, Node& newNode);
 
 		std::vector<float> m_Vertices;
 		std::vector<float> m_Normals;
+		std::vector<float> m_TexCoords;
 		std::vector<unsigned int> m_Indices;
 
 		std::vector<MaterialInfo*> m_Materials;
+		std::vector<TextureInfo*> m_Textures;
 		std::vector<Mesh*> m_Meshes;
 		Node* m_Root;
 		unsigned int	m_VertexArrayID,
