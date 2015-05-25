@@ -13,6 +13,7 @@ using namespace glm;
 
 #include <string>
 #include <vector>
+#include <FreeImage.h>
 
 #define TEXTURE_DIFFUSE		1
 #define TEXTURE_SPECULAR	2
@@ -33,9 +34,9 @@ struct MaterialInfo
 	glm::vec3 emissive;
     float shininess;
 
-	TextureInfo* diffuseTexture,
-				 specularTexture,
-				 normalTexture;
+	TextureInfo *diffuseTexture,
+				 *specularTexture,
+				 *normalTexture;
 };
 
 struct Mesh
@@ -53,13 +54,24 @@ struct Node
     std::vector<Node> nodes;
 };
 
+struct BoundingBox
+{
+	aiVector3D min;
+	aiVector3D max;
+};
+
 class Model
 {
 	private:
 		MaterialInfo* loadMaterial(aiMaterial* material);
-		TextureInfo* loadTexture(aiTexture* texture);
+		TextureInfo* loadTexture(aiString path, aiTextureType type);
+		FIBITMAP *loadImageToBitmap(const char *filename);
+		void calculateBoundingBox(const aiScene *pScene, aiVector3D *pMin, aiVector3D *pMax, const aiNode *pNode);
+
 		Mesh* loadMesh(aiMesh* mesh);
 		void loadNode(const aiScene* scene, aiNode* node, Node *parent, Node& newNode);
+
+		void drawNode(unsigned int programID, const glm::mat4& projection, const glm::mat4& view, glm::mat4& model, Node& pNode);
 
 		std::vector<float> m_Vertices;
 		std::vector<float> m_Normals;
@@ -72,11 +84,14 @@ class Model
 		Node* m_Root;
 		unsigned int	m_VertexArrayID,
 						m_VertexBuffer,
-						m_NormalBuffer;
+						m_NormalBuffer,
+						m_TexCoordBuffer;
 
+		BoundingBox m_BoundingBox;
 	public:
 		bool load(const std::string& fileName);
-		void draw(void);
+		BoundingBox getBoundingBox(void);
+		void draw(unsigned int programID, const glm::mat4& projection, const glm::mat4& view);
 };
 
 #endif // __MODEL_HPP__

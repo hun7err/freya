@@ -162,28 +162,30 @@ int main(int argc, char *argv[]) {
 	Model model;
 
 	printf("loading model...\n");
-	model.load("../res/models/stanford-bunny/bunny.obj");
+	//model.load("../res/models/stanford-bunny/bunny.obj");
+	model.load("../res/models/crytek-sponza/sponza.obj");
 	printf("model loaded\n");
 
-	GLuint programID = LoadShaders( "../res/shaders/triangle_vertex.glsl", "../res/shaders/triangle_fragment.glsl" );
+	//GLuint programID = LoadShaders( "../res/shaders/triangle_vertex.glsl", "../res/shaders/triangle_fragment.glsl" );
+	GLuint programID = LoadShaders( "../res/shaders/texturebasic_vertex.glsl", "../res/shaders/texturebasic_fragment.glsl" );
 
-	glm::vec3 position = glm::vec3( 0, 0, 5 );
+	//glm::vec3 position = glm::vec3( 0, 0, 5 );
+	BoundingBox bounding_box = model.getBoundingBox();
+	glm::vec3 position = glm::vec3( 0, 0, bounding_box.max.z + 3 );
 	// horizontal angle : toward -Z
 	float horizontalAngle = 3.14f;
 	// vertical angle : 0, look at the horizon
 	float verticalAngle = 0.0f;
-	// Initial Field of View
 	float FoV = 45.0f;
  
-	float speed = 0.005f,
-		mouseSpeed = 0.0005f,
+	float speed = 0.05f,	// 0.005f
+		mouseSpeed = 0.0002f,
 		deltaTime;
 	
 	double xpos, ypos, currentTime, lastTime = glfwGetTime();
 	glm::vec3 direction, right, up;
 	glm::mat4	ProjectionMatrix,
-				ViewMatrix,
-				ModelMatrix = glm::mat4(1.0f);  // Changes for each model !
+				ViewMatrix;
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
@@ -221,9 +223,8 @@ int main(int argc, char *argv[]) {
 		}
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(programID);
-		
-		ProjectionMatrix = glm::perspective(FoV, 4.0f / 3.0f, 0.1f, 100.0f);
+
+		ProjectionMatrix = glm::perspective(FoV, 4.0f / 3.0f, 0.1f, 10000.0f);	//far: 100
 		// Camera matrix
 		ViewMatrix       = glm::lookAt(
 			position,           // Camera is here
@@ -231,16 +232,9 @@ int main(int argc, char *argv[]) {
 			up                  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 		// Our ModelViewProjection : multiplication of our 3 matrices
-		glm::mat4 MVP        = ProjectionMatrix * ViewMatrix * ModelMatrix; // Remember, matrix multiplication is the other way around
+		// Remember, matrix multiplication is the other way around
 
-		GLuint MatrixID = glGetUniformLocation(programID, "MVP");
- 
-		// Send our transformation to the currently bound shader,
-		// in the "MVP" uniform
-		// For each model you render, since the MVP will be different (at least the M part)
-		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-		model.draw();
+		model.draw(programID, ProjectionMatrix, ViewMatrix);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -258,6 +252,11 @@ int main(int argc, char *argv[]) {
 		// Strafe left
 		if (glfwGetKey( window, GLFW_KEY_A ) == GLFW_PRESS){
 			position -= right * deltaTime * speed;
+		}
+		if (glfwGetKey( window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+			speed = 0.1f;
+		} else {
+			speed = 0.005f;
 		}
 	} while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 );
 
