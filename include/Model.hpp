@@ -54,12 +54,6 @@ struct Node
     std::vector<Node> nodes;
 };
 
-struct BoundingBox
-{
-	aiVector3D min;
-	aiVector3D max;
-};
-
 class Model
 {
 	private:

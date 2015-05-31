@@ -256,7 +256,7 @@ bool Model::load(const std::string& fileName)
 		fprintf(stderr, "Error loading file '%s': %s\n", fileName.c_str(), importer.GetErrorString());
 		return nullptr;
 	}
-
+	// tutaj skonczyles jak cos, nie ma za co ;-)
 	unsigned int i = 0;
 	
 	if(scene->HasMeshes())
