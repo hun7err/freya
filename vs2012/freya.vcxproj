@@ -116,13 +116,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\AssetManager.hpp" />
+    <ClInclude Include="..\include\Material.hpp" />
     <ClInclude Include="..\include\Memory.hpp" />
+    <ClInclude Include="..\include\Mesh.hpp" />
     <ClInclude Include="..\include\Model.hpp" />
+    <ClInclude Include="..\include\Node.hpp" />
+    <ClInclude Include="..\include\Scene.hpp" />
+    <ClInclude Include="..\include\Texture.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\AssetManager.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\Material.cpp" />
     <ClCompile Include="..\src\Memory.cpp" />
     <ClCompile Include="..\src\Model.cpp" />
+    <ClCompile Include="..\src\Scene.cpp" />
+    <ClCompile Include="..\src\Texture.cpp" />
+    <ClCompile Include="Node.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
